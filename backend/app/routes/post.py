@@ -71,17 +71,18 @@ def view_community_posts(community_id):
         return jsonify({"error": "Oops! No posts found in this community."}), 404
     return jsonify(post_list), 200
 
-@post_bp.route("/posts/<int:post_id>", methods=["DELETE"])
+@post_bp.route("/posts/<int:post_id>/delete", methods=["DELETE"])
+@jwt_required()
 def delete_post(post_id):
     user_id = get_jwt_identity()  
     post = Post.query.get(post_id)
     if not post:
-        return {"error": "Oops! Post not found"}, 404
-    if post.user_id != user_id:
-        return {"error": "You are not authorized to delete this post."}, 403
+        return jsonify({"error": "Oops! Post not found"}), 404
+    if str(post.user_id) != user_id:
+        return jsonify({"error": "You are not authorized to delete this post."}), 403
     db.session.delete(post)
     db.session.commit()
-    return {"message": "Success! Post deleted successfully."}, 200
+    return jsonify({"message": "Success! Post deleted successfully."}), 200
 
 
 

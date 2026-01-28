@@ -48,6 +48,11 @@ def signup():
     if not password:
         return jsonify({"msg": "Password is required"}), 400
 
+    is_valid, error_msg = check_user_input(email)   
+
+    if not is_valid:
+        return jsonify({"msg": f"Invalid email format: {error_msg}"}), 400
+
     found_user_email = User.query.filter_by(email=email).first() 
     found_user_name = User.query.filter_by(username=username).first()
     if found_user_email or found_user_name:

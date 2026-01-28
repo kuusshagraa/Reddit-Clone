@@ -47,14 +47,15 @@ def view_comments(post_id):
         })
     return jsonify(comments_list), 200
 
-@comment_bp.route("comments/<int:comment_id>/delete", methods = ["DELETE"])
+@comment_bp.route("/comments/<int:comment_id>/delete", methods = ["DELETE"])
+@jwt_required()
 def delete_comments(comment_id):
     user_id = get_jwt_identity()
     comment = Comment.query.get(comment_id)
     if not comment:
-        return {"Error" : "Oops! Comment not found!"}, 404
-    if comment.author_id != user_id:
-        return {"Error" : "You are not authorized to delete this comment."}, 403
+        return jsonify({"Error" : "Oops! Comment not found!"}), 404
+    if str(comment.author_id) != user_id:
+        return jsonify({"Error" : "You are not authorized to delete this comment."}), 403
     db.session.delete(comment)
     db.session.commit()
-    return {"message" : "Success! Comment deleted successfully."}, 200
+    return jsonify({"message" : "Success! Comment deleted successfully."}), 200
