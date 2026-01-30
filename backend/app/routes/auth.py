@@ -1,3 +1,4 @@
+import email
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from app.models.user import User
@@ -81,5 +82,3 @@ def view_profile():
         "communities_joined_count": communities_joined_count,
         "created_at": user.created_at.isoformat(),
     }), 200
-
-

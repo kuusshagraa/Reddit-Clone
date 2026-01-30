@@ -82,7 +82,7 @@ def delete_post(post_id):
         return jsonify({"error": "You are not authorized to delete this post."}), 403
     db.session.delete(post)
     db.session.commit()
-    return jsonify({"message": "Success! Post deleted successfully."}), 200
+    return jsonify({"msg": "Success! Post deleted successfully."}), 200
 
 
 
