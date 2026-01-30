@@ -48,6 +48,7 @@ Expect: 200 with
   - user id
   - username
   - email
+  - communities_joined_count  
   - created_at 
 
 ## 2. Community Routes (routes/community.py)
@@ -67,24 +68,30 @@ Expect: 200 with a list of all communities containing the following info of each
   - id
   - name
   - description
+  - member_count
   - creator_id
   - created_at
 
 **c. View a single community (GET /communities/`<int:community_id>`)**  
 
-Expect: 200 with all details of the community (same as before).
+Expect: 200 with all details of the community (same as before)
 
-**d. Join a community (POST /communities/`<int:community_id>`/join)**  
+**d. View joined communities (GET /communities/joined)**  
 
-Required: JWT Token in Header.  
+Required: JWT Token in header.  
+Expect: 200 with all details of community (same as before)
+
+**e. Join a community (POST /communities/`<int:community_id>`/join)**  
+
+Required: JWT Token in Header.    
 Expect: 201 with membership_id.
 
-**d. Leave a community (POST /communities/`<int:community_id>`/join)**  
+**f. Leave a community (POST /communities/`<int:community_id>`/leave)**  
 
 Required: JWT Token in Header.  
-Expect: 204
+Expect: 200
 
-**e. Delete a community (DELETE /communities/`<int:community_id>`/delete)**  
+**g. Delete a community (DELETE /communities/`<int:community_id>`/delete)**  
 
 Required: Only creator can delete a community.  
 Expect: 200
