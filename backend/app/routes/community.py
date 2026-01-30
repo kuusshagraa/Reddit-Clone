@@ -33,10 +33,12 @@ def view_communities():
     communities = Community.query.all()
     community_list = []
     for i in communities:
+        member_count = CommunityMembership.query.filter_by(community_id=i.id).count() 
         community_list.append({
             "id": i.id,
             "name": i.name,
             "description": i.description,
+            "member_count": member_count,
             "creator_id": i.creator_id,
             "created_at": i.created_at.isoformat(),
         })
@@ -47,15 +49,42 @@ def view_communities():
 @community_bp.route("/communities/<int:community_id>", methods=["GET"])
 def view_community(community_id):
     community = Community.query.get(community_id)
+
     if not community:
         return jsonify({"error": "Oops! Community not found"}), 404
+
+    member_count = CommunityMembership.query.filter_by(community_id=community_id).count()
+
     return jsonify({
         "id": community.id,
         "name": community.name,
         "description": community.description,
+        "member_count": member_count,
         "creator_id": community.creator_id,
         "created_at": community.created_at.isoformat(),
     }), 200
+
+@community_bp.route("/communities/joined", methods=["GET"])
+@jwt_required()
+def view_joined_communities():
+    user_id = get_jwt_identity()
+    memberships = CommunityMembership.query.filter_by(user_id=user_id).all()
+    joined_communities = []
+    for i in memberships:
+        community = Community.query.get(i.community_id)
+        if community:
+            member_count = CommunityMembership.query.filter_by(community_id = community.id).count()
+            joined_communities.append({
+                "id": community.id,
+                "name": community.name,
+                "description": community.description,
+                "member_count": member_count,
+                "creator_id": community.creator_id,
+                "created_at": community.created_at.isoformat()
+            })
+        if not joined_communities:
+            return jsonify({"error": "You have not joined any communities yet. Join one to get started!"}), 404
+    return jsonify(joined_communities), 200
 
 @community_bp.route("/communities/<int:community_id>/join", methods=["POST"])
 @jwt_required()
@@ -107,3 +136,4 @@ def delete_community(community_id):
     db.session.delete(community)
     db.session.commit()
     return jsonify({"message": f"Community deleted successfully"}), 200
+

@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from app.models.user import User
+from app.models.membership import CommunityMembership
 from app.extensions import db, bcrypt
-from app.models.user import User
 from app.utils.validators import check_user_input
 
 auth_bp = Blueprint('auth', __name__)
@@ -71,10 +71,14 @@ def view_profile():
     user = User.query.get(user_id)
     if not user:
         return jsonify({"msg": "User not found"}), 404
+    
+    communities_joined_count = CommunityMembership.query.filter_by(user_id=user.id).count()
+
     return jsonify({
         "id": user.id,
         "name": user.username,
         "email": user.email,
+        "communities_joined_count": communities_joined_count,
         "created_at": user.created_at.isoformat(),
     }), 200
 
