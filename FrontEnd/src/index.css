@@ -1,0 +1,12 @@
+/* LINE 1: The Import */
+@import url('https://fonts.googleapis.com/css2?family=Kavoon&family=Jolly+Lodger&display=swap');
+
+/* LINE 2-4: Tailwind Directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
